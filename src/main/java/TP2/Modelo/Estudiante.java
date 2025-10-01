@@ -10,6 +10,9 @@ import java.util.List;
 @Entity
 public class Estudiante {
 
+    @Id
+    private int id;
+
     @Column
     private String nombres;
 
@@ -22,7 +25,6 @@ public class Estudiante {
     @Column
     private String genero;
 
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String nro_documento;
 
@@ -36,3 +38,4 @@ public class Estudiante {
     private List<Carreras> carreras;
 
 }
+/*DNI,nombre,apellido,edad,genero,ciudad,LU*/

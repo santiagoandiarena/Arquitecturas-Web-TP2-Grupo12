@@ -3,7 +3,8 @@ package TP2.Modelo;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "estudianteCarrera")
 @Entity
 public class EstudianteCarrera {
@@ -28,4 +29,6 @@ public class EstudianteCarrera {
     @Column
     private Integer antiguedad;
 
+    public EstudianteCarrera(Estudiante estudiante, Carreras carrera, int antiguedad, int inscripcion, int egreso) {
+    }
 }

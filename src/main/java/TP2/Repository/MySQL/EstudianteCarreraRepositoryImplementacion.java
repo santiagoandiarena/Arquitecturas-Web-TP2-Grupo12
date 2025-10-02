@@ -46,4 +46,8 @@ public class EstudianteCarreraRepositoryImplementacion implements EstudianteCarr
             throw e;
         }
     }
+
+    public void guardarMatricula(EstudianteCarrera matricula) {
+    }
+
 }

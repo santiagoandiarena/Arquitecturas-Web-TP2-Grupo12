@@ -5,8 +5,10 @@ import TP2.Modelo.Estudiante;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.Query;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.*;
 
 
 @NoArgsConstructor
@@ -60,6 +62,42 @@ public class EstudianteRepositoryImplementacion implements EstudianteRepository 
                 throw e;
             }
         }
+    }
+
+    //Punto 2.c devolver todos los estudiantes
+    public List<Estudiante> devolverEstudiantes() {
+        List<Estudiante> estudiantes = new ArrayList<Estudiante>();
+
+        try {
+            Query query = em.createQuery("SELECT e FROM Estudiante e ORDER BY e.edad DESC");
+            estudiantes = query.getResultList();
+        } catch (PersistenceException e) {
+            System.out.println("No se pudo obtener la lista de estudiantes: " + e.getMessage());
+        }
+
+        return estudiantes;
+    }
+
+    //Punto 2.d devolver estudiantes en base a su genero
+    public List<Estudiante> devolverEstudiantesPorGenero(String genero) {
+        List<Estudiante> estudiantes = new ArrayList<Estudiante>();
+
+        try {
+            Query query = em.createQuery("SELECT e FROM Estudiante e  WHERE e.genero=:genero ORDER BY e.edad DESC");
+            estudiantes = query.getResultList();
+        } catch (PersistenceException e) {
+            System.out.println("No se pudo obtener la lista de estudiantes: " + e.getMessage());
+        }
+
+        return estudiantes;
+    }
+
+    public EstudianteDTO obtenerEstudianteLibreta(int LU) {
+        return null;
+    }
+
+    public void cargarTodos(ArrayList<Estudiante> estudiantes) {
+
     }
 
     //matricular un estudiante en una carrera (2b) (hecho en EstudianteCarreraRepository)

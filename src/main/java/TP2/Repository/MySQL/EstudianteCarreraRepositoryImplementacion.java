@@ -1,12 +1,15 @@
 package TP2.Repository.MySQL;
 
-import TP2.DTO.EstudianteDTO;
 import TP2.Modelo.Carreras;
 import TP2.Modelo.Estudiante;
 import TP2.Modelo.EstudianteCarrera;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.Query;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EstudianteCarreraRepositoryImplementacion implements EstudianteCarreraRepository{
     private EntityManager em;

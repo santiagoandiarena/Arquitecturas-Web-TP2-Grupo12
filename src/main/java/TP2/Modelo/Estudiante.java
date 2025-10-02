@@ -11,7 +11,8 @@ import java.util.List;
 public class Estudiante {
 
     @Id
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long nro_documento;
 
     @Column
     private String nombres;
@@ -24,9 +25,6 @@ public class Estudiante {
 
     @Column
     private String genero;
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String nro_documento;
 
     @Column
     private String ciudad_residencia;

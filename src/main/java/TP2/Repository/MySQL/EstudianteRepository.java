@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface EstudianteRepository {
     void addEstudiante(Estudiante estudiante);
-    EstudianteDTO obtenerEstudianteLibreta(int LU);
-    List<Estudiante> devolverEstudiantes();
-    List<Estudiante> devolverEstudiantesPorGenero(String genero);
+    EstudianteDTO obtenerEstudianteLibreta(String nro_libreta_universitaria);
+    List<EstudianteDTO> devolverEstudiantes();
+    List<EstudianteDTO> devolverEstudiantesPorGenero(String genero);
     void cargarTodos(ArrayList<Estudiante> estudiantes);
 }

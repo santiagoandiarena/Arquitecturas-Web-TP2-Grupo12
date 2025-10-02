@@ -1,99 +1,133 @@
 package TP2.Utils;
 
+import TP2.Factory.JPAUtil;
 import TP2.Modelo.Carreras;
 import TP2.Modelo.Estudiante;
 
 import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 
 import TP2.Modelo.EstudianteCarrera;
-import TP2.Repository.MySQL.CarrerasRepositoryImplementacion;
-import TP2.Repository.MySQL.EstudianteCarreraRepositoryImplementacion;
-import TP2.Repository.MySQL.EstudianteRepository;
-import TP2.Repository.MySQL.EstudianteRepositoryImplementacion;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-
-
+import com.opencsv.CSVReader;
+import jakarta.persistence.EntityManager;
 
 public class CargarDatos {
 
+    public CargarDatos(){
+        cargar();
+    }
+
     public void cargar(){
-        cargarCarreras("src/main/java/TP2/Archivos/carreras.csv");
-        cargarEstudiantes("src/main/java/TP2/Archivos/estudiantes.csv");
-        cargarMatriculas("src/main/java/TP2/Archivos/matriculas.csv");
+        cargarCarreras("src/main/resources/DBData/carreras.csv");
+        cargarEstudiantes("src/main/resources/DBData/estudiantes.csv");
+        cargarMatriculas("src/main/resources/DBData/estudianteCarrera.csv");
+        System.out.println("Datos cargados correctamente");
     }
 
     private void cargarEstudiantes(String path){
-        try {
-            ArrayList<Estudiante> estudiantes = new ArrayList<Estudiante>();
-            CSVParser parse = CSVFormat.DEFAULT.withHeader().parse(new FileReader(path));
-            for (CSVRecord record : parse) {
-                Estudiante estudiante = new Estudiante(
-                        Long.parseLong(record.get(0)),
-                        record.get(1),
-                        record.get(2),
-                        record.parseInt(record.get(3)),
-                        record.get(4),
-                        record.get(5),
-                        Integer.parseInt(record.get(6))
-                );
-                estudiantes.add(estudiante);
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try (CSVReader reader = new CSVReader(new FileReader(path))){
+            String[] linea;
+            reader.readNext();
+
+            em.getTransaction().begin();
+
+            while((linea = reader.readNext()) != null){
+                Estudiante estudiante = new Estudiante();
+                estudiante.setNro_documento(Long.parseLong(linea[0]));
+                estudiante.setNombres(linea[1]);
+                estudiante.setApellido(linea[2]);
+                estudiante.setEdad(Integer.parseInt(linea[3]));
+                estudiante.setGenero(linea[4]);
+                estudiante.setCiudad_residencia(linea[5]);
+                estudiante.setNro_libreta_universitaria(linea[6]);
+
+                em.persist(estudiante);
             }
-            EstudianteRepository estudianteRepository = new EstudianteRepositoryImplementacion();
-            estudianteRepository.cargarTodos(estudiantes);
-        } catch (IOException e) {
-            throw new RuntimeException("Error leyendo estudiantes: " + e.getMessage(), e);
+
+            em.getTransaction().commit();
+
+            System.out.println("Datos de estudiantes cargados correctamente");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
         }
     }
+
     private void cargarCarreras(String path){
-        try {
-            ArrayList<Carreras> carreras = new ArrayList<Carreras>();
-            CSVParser parse = CSVFormat.DEFAULT.withHeader().parse(new FileReader(path));
-            for (CSVRecord record : parse) {
-                Carreras carrera = new Carreras(
-                        Integer.parseInt(record.get("id_carrera")),
-                        record.get("carrera"),
-                        Integer.parseInt(record.get("duracion"))
-                );
-                carreras.add(carrera);
+
+        EntityManager em = JPAUtil.getEntityManager();
+
+        try (CSVReader reader = new CSVReader(new FileReader(path))){
+            String[] linea;
+            reader.readNext();
+
+            em.getTransaction().begin();
+
+            while((linea = reader.readNext()) != null) {
+                Carreras carrera = new Carreras();
+                carrera.setId_carrera(Integer.parseInt(linea[0]));
+                carrera.setCarrera(linea[1]);
+                carrera.setDuracion(Integer.parseInt(linea[2]));
+                em.persist(carrera);
             }
-            CarrerasRepositoryImplementacion carrerasRepository = new CarrerasRepositoryImplementacion();
-            carrerasRepository.cargarTodos(carreras);
-        } catch (IOException e) {
-            throw new RuntimeException("Error leyendo estudiantes: " + e.getMessage(), e);
+
+            em.getTransaction().commit();
+
+            System.out.println("Datos de carreras cargados correctamente");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
         }
     }
 
-    private void  cargarMatriculas(String path){
-        try {
-            CSVParser parse = CSVFormat.DEFAULT.withHeader().parse(new FileReader(path));
+    private void cargarMatriculas(String path){
+        EntityManager em = JPAUtil.getEntityManager();
 
-            EstudianteRepositoryImplementacion estudianteRepo = new EstudianteRepositoryImplementacion();
-            CarrerasRepositoryImplementacion carrerasRepo = new CarrerasRepositoryImplementacion();
-            EstudianteCarreraRepositoryImplementacion estudianteCarreraRepo = new EstudianteCarreraRepositoryImplementacion();
+        try (CSVReader reader = new CSVReader(new FileReader(path))) {
+            String[] linea;
+            reader.readNext();
 
-            for (CSVRecord record : parse) {
-                Carreras carrera = carrerasRepo.buscarPorId(Long.parseLong(record.get(1)));
-                Estudiante estudiante = estudianteRepo.buscarPorId(Long.parseLong(record.get(0)));
+            em.getTransaction().begin();
+            while((linea = reader.readNext()) != null){
 
-                if (carrera != null && estudiante != null) {
-                    EstudianteCarrera matricula = new EstudianteCarrera(
-                            estudiante,
-                            carrera,
-                            Integer.parseInt(record.get("antiguedad")),
-                            Integer.parseInt(record.get("inscripcion")),
-                            Integer.parseInt(record.get("graduacion"))
-                    );
-                    estudianteCarreraRepo.guardarMatricula(matricula);
-                } else {
-                    System.out.println("Error: No se encontró el estudiante o la carrera para la matrícula: " + record);
-                }
+                String dniEstudiante = linea[0];
+                Estudiante estudiante = em.find(Estudiante.class, dniEstudiante);
+
+                int idCarrera = Integer.parseInt(linea[0]);
+                Carreras carrera = em.find(Carreras.class, idCarrera);
+
+                if (estudiante != null && carrera != null){
+                    Integer graduacion = "0".equals(linea[4]) ? null : Integer.parseInt(linea[4]);
+
+                    EstudianteCarrera matricula = new EstudianteCarrera();
+                    matricula.setEstudiante(estudiante);
+                    matricula.setCarrera(carrera);
+                    matricula.setInscripcion(Integer.parseInt(linea[3]));
+                    matricula.setGraduacion(graduacion);
+                    matricula.setAntiguedad(Integer.parseInt(linea[5]));
+
+                    em.persist(matricula);
+
+                    System.out.println("Matricula cargada correctamente");
+                } else {System.out.println("Estudiante o Carrera no encontrado");}
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Error leyendo estudiantes: " + e.getMessage(), e);
+
+            em.getTransaction().commit();
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
         }
+
     }
 }
+
+/*
+* @Data
+All together now: A shortcut for @ToString, @EqualsAndHashCode, @Getter on all fields, @Setter on all non-final fields, and @RequiredArgsConstructor!*/

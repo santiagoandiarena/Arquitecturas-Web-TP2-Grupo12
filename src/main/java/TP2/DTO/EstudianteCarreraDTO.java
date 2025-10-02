@@ -5,6 +5,7 @@ import TP2.Modelo.Estudiante;
 import lombok.*;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString

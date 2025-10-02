@@ -35,13 +35,13 @@ public class EstudianteCarreraRepositoryImplementacion implements EstudianteCarr
     }
 
     //2b matricular un estudiante en una carrera
-    public void matricularEstudiante(Estudiante estudiante, Carreras carrera, int antiguedad, int inscripcion, int egreso, boolean graduado) {
-        EstudianteCarrera estudianteCarrera = new EstudianteCarrera(estudiante, carrera, antiguedad, inscripcion, egreso);
+    public void matricularEstudiante(Long id, Estudiante estudiante, Carreras carrera, int inscripcion, int graduacion, int antiguedad) {
+        EstudianteCarrera estudianteCarrera = new EstudianteCarrera(id, estudiante, carrera, inscripcion, graduacion, antiguedad);
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
 
         try {
-            em.persist(inscripcion);
+            em.persist(estudianteCarrera);
             transaction.commit();
         } catch (PersistenceException e) {
             transaction.rollback();

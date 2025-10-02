@@ -41,7 +41,7 @@ public class EstudianteRepositoryImplementacion implements EstudianteRepository 
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
 
-        if (estudiante.getId() == 0) {
+        if (estudiante.getNro_documento() == 0) {
             try {
                 em.persist(estudiante);
                 transaction.commit();
@@ -65,8 +65,8 @@ public class EstudianteRepositoryImplementacion implements EstudianteRepository 
     }
 
     //Punto 2.c devolver todos los estudiantes
-    public List<Estudiante> devolverEstudiantes() {
-        List<Estudiante> estudiantes = new ArrayList<Estudiante>();
+    public List<EstudianteDTO> devolverEstudiantes() {
+        List<EstudianteDTO> estudiantes = new ArrayList<EstudianteDTO>();
 
         try {
             Query query = em.createQuery("SELECT e FROM Estudiante e ORDER BY e.edad DESC");
@@ -79,8 +79,8 @@ public class EstudianteRepositoryImplementacion implements EstudianteRepository 
     }
 
     //Punto 2.d devolver estudiantes en base a su genero
-    public List<Estudiante> devolverEstudiantesPorGenero(String genero) {
-        List<Estudiante> estudiantes = new ArrayList<Estudiante>();
+    public List<EstudianteDTO> devolverEstudiantesPorGenero(String genero) {
+        List<EstudianteDTO> estudiantes = new ArrayList<EstudianteDTO>();
 
         try {
             Query query = em.createQuery("SELECT e FROM Estudiante e  WHERE e.genero=:genero ORDER BY e.edad DESC");
@@ -102,36 +102,28 @@ public class EstudianteRepositoryImplementacion implements EstudianteRepository 
 
     //matricular un estudiante en una carrera (2b) (hecho en EstudianteCarreraRepository)
 
-/*
+
     @Override
-    public EstudianteDTO obtenerEstudianteLibreta(int LU) {
+    public EstudianteDTO obtenerEstudianteLibreta(String nro_libreta_universitaria) {
         try {
-            return em.createQuery(
-                            "SELECT new dtos.EstudianteDTO(e.nombres, e.apellido, e.edad, e.genero, e.dni, e.ciudadResidencia, e.lu) " +
-                                    "FROM Estudiante e " +
-                                    "WHERE e.lu = :lu", EstudianteDTO.class)
-                    .setParameter("lu", LU)
-                    .getSingleResult();
+            Estudiante estudiante = em.find(Estudiante.class, nro_libreta_universitaria);
+
+            if (estudiante == null) {
+                return null;
+            }
+
+            return new EstudianteDTO(
+                    estudiante.getNombres(),
+                    estudiante.getApellido(),
+                    estudiante.getEdad(),
+                    estudiante.getGenero(),
+                    estudiante.getCiudad_residencia(),
+                    estudiante.getNro_libreta_universitaria()
+            );
         } catch (PersistenceException e) {
-            System.out.println("Error al obtener estudiante por LU! " + e.getMessage());
-            throw e;
+            System.out.println("Error al obtener estudiante por nro_libreta_universitaria D:" + e.getMessage());
+            return null;
         }
     }
-*/
-    /*
-    public EstudianteDTO obtenerEstudiantePorLu(long lu) {
-        try {
-            return em.createQuery(
-                        "SELECT new dtos.EstudianteDTO(e.nombres, e.apellido, e.edad, e.genero, e.dni, e.ciudadResidencia, e.lu) " +
-                                "FROM Estudiante e " +
-                                "WHERE e.lu = :lu"
-                            , EstudianteDTO.class)
-                    .setParameter("lu", lu)
-                    .getSingleResult();
-        } catch (PersistenceException e) {
-            System.out.println("Error al obtener estudiante por lu! " + e.getMessage());
-            throw e;
-        }
-    }
-    */
+
 }

@@ -11,5 +11,5 @@ public interface EstudianteRepository {
     EstudianteDTO obtenerEstudianteLibreta(String nro_libreta_universitaria);
     List<EstudianteDTO> devolverEstudiantes();
     List<EstudianteDTO> devolverEstudiantesPorGenero(String genero);
-    void cargarTodos(ArrayList<Estudiante> estudiantes);
+    List<EstudianteDTO> devolverEstudiantesDeXCarreraPorCiudad(int idCarrera, String ciudad);
 }

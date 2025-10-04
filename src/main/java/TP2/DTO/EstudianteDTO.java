@@ -13,11 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EstudianteDTO {
-    private String nombre;
+    private String nombres;
     private String apellido;
     private int edad;
     private String genero;
     private String ciudad_residencia;
     private String nro_libreta_universitaria;
-    /*Creo que esto no va - Pedro Islas*/ /*private List<Carreras> carreras;*/
 }

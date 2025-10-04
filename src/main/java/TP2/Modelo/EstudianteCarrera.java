@@ -3,6 +3,8 @@ package TP2.Modelo;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 
 @Getter
 @Setter
@@ -25,10 +27,10 @@ public class EstudianteCarrera {
     private Carreras carrera;
 
     @Column
-    private Integer inscripcion;
+    private LocalDate inscripcion;
 
     @Column
-    private Integer graduacion;
+    private LocalDate graduacion;
 
     @Column
     private Integer antiguedad;

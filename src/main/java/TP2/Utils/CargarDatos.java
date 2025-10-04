@@ -9,6 +9,7 @@ import java.io.FileReader;
 import TP2.Modelo.EstudianteCarrera;
 import com.opencsv.CSVReader;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDate;
 
 public class CargarDatos {
 
@@ -73,9 +74,7 @@ public class CargarDatos {
                 carrera.setCarrera(linea[1]);
                 carrera.setDuracion(Integer.parseInt(linea[2]));
 
-
                 em.merge(carrera);
-
             }
 
             em.getTransaction().commit();
@@ -104,13 +103,15 @@ public class CargarDatos {
                 Carreras carrera = em.find(Carreras.class, idCarrera);
 
                 if (estudiante != null && carrera != null){
-                    Integer graduacion = "0".equals(linea[4]) ? null : Integer.parseInt(linea[4]);
+                    // Convertir año (Integer) a LocalDate (1 de enero de ese año)
+                    LocalDate inscripcion = LocalDate.of(Integer.parseInt(linea[3]), 1, 1);
+                    LocalDate graduacion = "0".equals(linea[4]) ? null : LocalDate.of(Integer.parseInt(linea[4]), 1, 1);
 
                     EstudianteCarrera matricula = new EstudianteCarrera();
                     matricula.setId(Long.parseLong(linea[0]));
                     matricula.setEstudiante(estudiante);
                     matricula.setCarrera(carrera);
-                    matricula.setInscripcion(Integer.parseInt(linea[3]));
+                    matricula.setInscripcion(inscripcion);
                     matricula.setGraduacion(graduacion);
                     matricula.setAntiguedad(Integer.parseInt(linea[5]));
 

@@ -6,5 +6,5 @@ import TP2.Modelo.Estudiante;
 import java.time.LocalDate;
 
 public interface EstudianteCarreraRepository {
-    void matricularEstudiante(Long id, Estudiante estudiante, Carreras carrera, int inscripcion, int graduacion, int antiguedad);
+    void matricularEstudiante(Long id, Estudiante estudiante, Carreras carrera, LocalDate inscripcion, LocalDate graduacion, int antiguedad);
 }

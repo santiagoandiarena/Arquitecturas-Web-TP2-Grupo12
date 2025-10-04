@@ -41,27 +41,16 @@ public class EstudianteRepositoryImplementacion implements EstudianteRepository 
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
 
-        if (estudiante.getNro_documento() == 0) {
-            try {
-                em.persist(estudiante);
-                transaction.commit();
-                System.out.println("Estudiante insertado correctamente!");
-            } catch (PersistenceException e) {
-                transaction.rollback();
-                System.out.println("Error al insertar estudiante! " + e.getMessage());
-                throw e;
-            }
-        } else {   // Si ya tiene ID, hacemos un update
-            try {
-                em.merge(estudiante);
-                transaction.commit();
-                System.out.println("Estudiante actualizado correctamente!");
-            } catch (PersistenceException e) {
-                transaction.rollback();
-                System.out.println("Error al actualizar estudiante! " + e.getMessage());
-                throw e;
-            }
+        try {
+            em.merge(estudiante);
+            transaction.commit();
+            System.out.println("Estudiante insertado correctamente!");
+        } catch (PersistenceException e) {
+            transaction.rollback();
+            System.out.println("Error al insertar estudiante! " + e.getMessage());
+            throw e;
         }
+
     }
 
     //Punto 2.c devolver todos los estudiantes
@@ -78,12 +67,13 @@ public class EstudianteRepositoryImplementacion implements EstudianteRepository 
         return estudiantes;
     }
 
-    //Punto 2.d devolver estudiantes en base a su genero
+    //Punto 2.e devolver estudiantes en base a su genero
     public List<EstudianteDTO> devolverEstudiantesPorGenero(String genero) {
         List<EstudianteDTO> estudiantes = new ArrayList<EstudianteDTO>();
 
         try {
-            Query query = em.createQuery("SELECT e FROM Estudiante e  WHERE e.genero=:genero ORDER BY e.edad DESC");
+            Query query = em.createQuery("SELECT e FROM Estudiante e  WHERE e.genero=:genero ORDER BY e.edad DESC")
+                    .setParameter("genero", genero);
             estudiantes = query.getResultList();
         } catch (PersistenceException e) {
             System.out.println("No se pudo obtener la lista de estudiantes: " + e.getMessage());
@@ -92,38 +82,61 @@ public class EstudianteRepositoryImplementacion implements EstudianteRepository 
         return estudiantes;
     }
 
-    public EstudianteDTO obtenerEstudianteLibreta(int LU) {
-        return null;
-    }
-
-    public void cargarTodos(ArrayList<Estudiante> estudiantes) {
-
-    }
-
-    //matricular un estudiante en una carrera (2b) (hecho en EstudianteCarreraRepository)
-
-
     @Override
-    public EstudianteDTO obtenerEstudianteLibreta(String nro_libreta_universitaria) {
+    public EstudianteDTO obtenerEstudianteLibreta(String lu) {
         try {
-            Estudiante estudiante = em.find(Estudiante.class, nro_libreta_universitaria);
-
-            if (estudiante == null) {
-                return null;
-            }
+            System.out.println("num"+ lu);
+            Query query = em.createQuery("SELECT e FROM Estudiante e WHERE e.nro_libreta_universitaria = :lu")
+                    .setParameter("lu", lu);
+            Estudiante e = (Estudiante) query.getSingleResult();
 
             return new EstudianteDTO(
-                    estudiante.getNombres(),
-                    estudiante.getApellido(),
-                    estudiante.getEdad(),
-                    estudiante.getGenero(),
-                    estudiante.getCiudad_residencia(),
-                    estudiante.getNro_libreta_universitaria()
+                    e.getNombres(),
+                    e.getApellido(),
+                    e.getEdad(),
+                    e.getGenero(),
+                    e.getCiudad_residencia(),
+                    e.getNro_libreta_universitaria()
             );
+
         } catch (PersistenceException e) {
-            System.out.println("Error al obtener estudiante por nro_libreta_universitaria D:" + e.getMessage());
+            System.out.println("No se pudo obtener el estudiante por LU: " + e.getMessage());
             return null;
         }
     }
+
+    //2-G. Recuperar los estudiantes de una determinada carrera filtrado por ciudad de residencia
+    public List<EstudianteDTO> devolverEstudiantesDeXCarreraPorCiudad(int idCarrera, String ciudad) {
+        List<EstudianteDTO> estudiantes = new ArrayList<>();
+
+        try {
+            Query query = em.createQuery(
+                    "SELECT e FROM Estudiante e " +
+                    "JOIN EstudianteCarrera ec ON ec.estudiante = e " +
+                    "JOIN Carreras c ON ec.carrera = c " +
+                    "WHERE c.id_carrera = :idCarrera AND e.ciudad_residencia = :ciudad")
+                    .setParameter("idCarrera", idCarrera)
+                    .setParameter("ciudad", ciudad);
+            
+            List<Estudiante> resultados = query.getResultList();
+
+            for (Estudiante est : resultados) {
+                estudiantes.add(new EstudianteDTO(
+                    est.getNombres(),
+                    est.getApellido(),
+                    est.getEdad(),
+                    est.getGenero(),
+                    est.getCiudad_residencia(),
+                    est.getNro_libreta_universitaria()
+                ));
+            }
+        } catch (PersistenceException e) {
+            System.out.println("No se pudo obtener la lista de estudiantes: " + e.getMessage());
+        }
+
+        return estudiantes;
+    }
+
+
 
 }

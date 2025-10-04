@@ -8,21 +8,22 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EstudianteCarreraRepositoryImplementacion implements EstudianteCarreraRepository{
     private EntityManager em;
-    private static EstudianteRepositoryImplementacion instance;
+    private static EstudianteCarreraRepositoryImplementacion instance;
 
     private EstudianteCarreraRepositoryImplementacion(EntityManager em) {
         this.em = em;
     }
 
     //Singleton
-    public static EstudianteRepositoryImplementacion getInstance(EntityManager em) {
+    public static EstudianteCarreraRepositoryImplementacion getInstance(EntityManager em) {
         if (instance == null) {
-            instance = new EstudianteRepositoryImplementacion(em);
+            instance = new EstudianteCarreraRepositoryImplementacion(em);
         }
         return instance;
     }
@@ -35,13 +36,13 @@ public class EstudianteCarreraRepositoryImplementacion implements EstudianteCarr
     }
 
     //2b matricular un estudiante en una carrera
-    public void matricularEstudiante(Long id, Estudiante estudiante, Carreras carrera, int inscripcion, int graduacion, int antiguedad) {
+    public void matricularEstudiante(Long id, Estudiante estudiante, Carreras carrera, LocalDate inscripcion, LocalDate graduacion, int antiguedad) {
         EstudianteCarrera estudianteCarrera = new EstudianteCarrera(id, estudiante, carrera, inscripcion, graduacion, antiguedad);
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
 
         try {
-            em.persist(estudianteCarrera);
+            em.merge(estudianteCarrera);
             transaction.commit();
         } catch (PersistenceException e) {
             transaction.rollback();

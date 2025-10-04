@@ -23,8 +23,8 @@ public class CarrerasRepositoryImplementacion implements CarrerasRepository {
 
         try {
             String jpql = "SELECT c, COUNT(ce) " +
-                    "FROM Carreras c JOIN c.estudianteCarrera ce " +
-                    "WHERE ce.inscripcion > 0" +
+                    "FROM Carrera c JOIN c.estudianteCarrera ce " +
+                    "WHERE ce.inscripcion > 0 " +
                     "GROUP BY c " +
                     "ORDER BY COUNT(ce) DESC";
 

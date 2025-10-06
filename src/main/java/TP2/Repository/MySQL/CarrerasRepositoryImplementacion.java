@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CarrerasRepositoryImplementacion implements CarrerasRepository {
     private EntityManager em;
@@ -120,23 +121,111 @@ public class CarrerasRepositoryImplementacion implements CarrerasRepository {
         }
     }*/
 
-    public List<ReporteCarreraDTO> generarReporte() {
+    /*public List<ReporteCarreraDTO> generarReporte() {
         try {
-            String jpql = "SELECT new TP2.DTO.ReporteCarreraDTO(c.carrera, " +
-                    "YEAR(ec.inscripcion), " +
-                    "YEAR(ec.graduacion), " +
-                    "(SELECT COUNT(ec1) FROM EstudianteCarrera ec1 WHERE ec1.graduacion IS NULL AND carrera = c), " + // Inscripciones sin egreso
-                    "(SELECT COUNT(ec2) FROM EstudianteCarrera ec2 WHERE ec2.graduacion IS NOT NULL AND ec2.carrera = c), " + // Inscripciones con egreso
-                    "e.nro_documento) " +
-                    "FROM EstudianteCarrera ec " +
-                    "JOIN ec.carrera c " +
-                    "JOIN ec.estudiante e " +
-                    "ORDER BY c.carrera ASC, YEAR(ec.inscripcion) ASC, YEAR(ec.graduacion) ASC";
+            String jpql = "SELECT new TP2.DTO.ReporteCarreraDTO(\n" +
+                    "        c.carrera,\n" +
+                    "        FUNCTION('YEAR', ec.inscripcion),\n" +
+                    "        FUNCTION('YEAR', ec.graduacion),\n" +
+                    "        SUM(CASE WHEN ec.graduacion IS NULL THEN 1 ELSE 0 END),\n" +
+                    "        SUM(CASE WHEN ec.graduacion IS NOT NULL THEN 1 ELSE 0 END)) \n" +
+                    "    FROM EstudianteCarrera ec\n" +
+                    "    JOIN ec.carrera c\n" +
+                    "    GROUP BY c.carrera, FUNCTION('YEAR', ec.inscripcion), FUNCTION('YEAR', ec.graduacion)\n" +
+                    "    ORDER BY c.carrera ASC, FUNCTION('YEAR', ec.inscripcion) ASC, FUNCTION('YEAR', ec.graduacion) ASC";
 
             return em.createQuery(jpql, ReporteCarreraDTO.class).getResultList();
         } catch (Exception e) {
             System.out.println("Error al generar reporte de carreras: " + e.getMessage());
             return null;
+        }
+    }*/
+    /*public List<ReporteCarreraDTO> generarReporte() {
+        try {
+            String jpql = "SELECT new TP2.DTO.ReporteCarreraDTO(\n" +
+                    "        c.carrera,\n" +
+                    "        YEAR(ec.inscripcion),\n" +
+                    "        YEAR(ec.graduacion),\n" +  // Sin CASE WHEN complejos
+                    "        COUNT(ec),\n" +
+                    "        SUM(CASE WHEN ec.graduacion IS NOT NULL THEN 1 ELSE 0 END))\n" +
+                    "    FROM EstudianteCarrera ec\n" +
+                    "    JOIN ec.carrera c\n" +
+                    "    WHERE ec.graduacion IS NULL OR ec.inscripcion <= ec.graduacion\n" +
+                    "    GROUP BY c.carrera, YEAR(ec.inscripcion), YEAR(ec.graduacion)\n" +
+                    "    ORDER BY c.carrera, YEAR(ec.inscripcion), YEAR(ec.graduacion)";
+
+            List<ReporteCarreraDTO> resultados = em.createQuery(jpql, ReporteCarreraDTO.class).getResultList();
+
+            //Post-procesamiento para manejar el valor 0
+            return resultados.stream()
+                    .map(dto -> {
+                        //Si el año de egreso es 0, tratarlo como null
+                        if (dto.getAnioEgreso() != null && dto.getAnioEgreso() == 0) {
+                            return new ReporteCarreraDTO(
+                                    dto.getNombreCarrera(),
+                                    dto.getAnioInscripcion(),
+                                    null,  //Egreso null para valor 0
+                                    dto.getCantidadInscriptos(),
+                                    dto.getCantidadEgresados()
+                            );
+                        }
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            System.out.println("Error al generar reporte de carreras: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }*/
+    public void generarReporte() {
+        try {
+            String jpql = "SELECT new TP2.DTO.ReporteCarreraDTO(\n" +
+                    "        c.carrera,\n" +
+                    "        YEAR(ec.inscripcion),\n" +
+                    "        YEAR(ec.graduacion),\n" +
+                    "        COUNT(ec),\n" +
+                    "        SUM(CASE WHEN ec.graduacion IS NOT NULL THEN 1 ELSE 0 END))\n" +
+                    "    FROM EstudianteCarrera ec\n" +
+                    "    JOIN ec.carrera c\n" +
+                    "    WHERE ec.graduacion IS NULL OR YEAR(ec.graduacion) = 0 OR ec.inscripcion <= ec.graduacion\n" +
+                    "    GROUP BY c.carrera, YEAR(ec.inscripcion), YEAR(ec.graduacion)\n" +
+                    "    ORDER BY c.carrera, YEAR(ec.inscripcion), YEAR(ec.graduacion)";
+
+            List<ReporteCarreraDTO> resultados = em.createQuery(jpql, ReporteCarreraDTO.class).getResultList();
+
+            //CORREGIDO: Asignar el resultado del post-procesamiento
+            List<ReporteCarreraDTO> resultadosProcesados = resultados.stream()
+                    .map(dto -> {
+                        if (dto.getAnioEgreso() != null && dto.getAnioEgreso() == 0) {
+                            return new ReporteCarreraDTO(
+                                    dto.getNombreCarrera(),
+                                    dto.getAnioInscripcion(),
+                                    null,  // Convertir 0 a null
+                                    dto.getCantidadInscriptos(),
+                                    dto.getCantidadEgresados()
+                            );
+                        }
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+
+            //Usar la lista procesada
+            String currentCareer = "";
+            for (ReporteCarreraDTO rr: resultadosProcesados) {  // Cambiado aquí
+                if(!rr.getNombreCarrera().equals(currentCareer)) {
+                    currentCareer = rr.getNombreCarrera();
+                    System.out.println("Carrera: " + currentCareer);
+                }
+                System.out.println("  Año Inscripción: " + rr.getAnioInscripcion() +
+                        " | Año Egreso: " + (rr.getAnioEgreso() != null ? rr.getAnioEgreso() : "N/A") +
+                        " | Inscriptos: " + rr.getCantidadInscriptos() +
+                        " | Egresados: " + rr.getCantidadEgresados());
+            }
+        } catch (Exception e) {
+            System.out.println("Error al generar reporte de carreras: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

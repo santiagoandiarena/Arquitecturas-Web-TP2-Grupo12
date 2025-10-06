@@ -13,5 +13,4 @@ public class ReporteCarreraDTO {
     private Integer anioEgreso;
     private Long cantidadInscriptos;
     private Long cantidadEgresados;
-    private Long estudiante;
 }

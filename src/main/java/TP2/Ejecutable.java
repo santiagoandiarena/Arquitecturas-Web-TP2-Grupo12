@@ -58,18 +58,8 @@ public class Ejecutable {
         System.out.println("\nEstudiantes de una determinada carrera y ciudad:" +repoEstudiante.devolverEstudiantesDeXCarreraPorCiudad(1, "Paquera"));
 */
         /*3. Generar un reporte de las carreras, que para cada carrera incluya información de los inscriptos y egresados por año. Se deben ordenar las carreras alfabéticamente, y presentar los años de manera cronológica*/
-        List<ReporteCarreraDTO> reporteCarreraDTO = repoCarreras.generarReporte();
+        repoCarreras.generarReporte();
 
-        if (reporteCarreraDTO != null) {
-            System.out.println("===============================================================================================================================" +
-                    " Reporte de Carreras " +
-                    "===============================================================================================================================");
-            for (ReporteCarreraDTO dto : reporteCarreraDTO) {
-                System.out.println(dto);
-            }
-        } else {
-            System.out.println("No se pudo generar el reporte.");
-        }
 
         // Cerrar los EntityManager
         repoCarreras.close();

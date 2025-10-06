@@ -5,5 +5,5 @@ import TP2.DTO.ReporteCarreraDTO;
 import java.util.List;
 
 public interface CarrerasRepository {
-    List<ReporteCarreraDTO> generarReporte();
+    void generarReporte();
 }

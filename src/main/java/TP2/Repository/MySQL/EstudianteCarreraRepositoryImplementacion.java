@@ -36,7 +36,7 @@ public class EstudianteCarreraRepositoryImplementacion implements EstudianteCarr
     }
 
     //2b matricular un estudiante en una carrera
-    public void matricularEstudiante(Long id, Estudiante estudiante, Carreras carrera, LocalDate inscripcion, LocalDate graduacion, int antiguedad) {
+    public void matricularEstudiante(Long id, Estudiante estudiante, Carreras carrera, int inscripcion, int graduacion, int antiguedad) {
         EstudianteCarrera estudianteCarrera = new EstudianteCarrera(id, estudiante, carrera, inscripcion, graduacion, antiguedad);
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
@@ -44,6 +44,7 @@ public class EstudianteCarreraRepositoryImplementacion implements EstudianteCarr
         try {
             em.merge(estudianteCarrera);
             transaction.commit();
+            System.out.println("Estudiante matriculado exitosamente");
         } catch (PersistenceException e) {
             transaction.rollback();
             System.out.println("Error al matricular estudiante " + e.getMessage());

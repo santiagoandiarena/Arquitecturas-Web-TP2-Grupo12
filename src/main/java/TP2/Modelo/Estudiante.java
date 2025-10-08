@@ -35,4 +35,3 @@ public class Estudiante {
     private List<Carreras> carreras;
 
 }
-/*DNI,nombre,apellido,edad,genero,ciudad,LU*/

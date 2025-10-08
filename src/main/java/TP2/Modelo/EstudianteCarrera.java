@@ -27,10 +27,10 @@ public class EstudianteCarrera {
     private Carreras carrera;
 
     @Column
-    private LocalDate inscripcion;
+    private Integer inscripcion;
 
     @Column
-    private LocalDate graduacion;
+    private Integer graduacion;
 
     @Column
     private Integer antiguedad;

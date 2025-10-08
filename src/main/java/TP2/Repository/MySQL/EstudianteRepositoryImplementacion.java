@@ -53,12 +53,13 @@ public class EstudianteRepositoryImplementacion implements EstudianteRepository 
 
     }
 
-    //Punto 2.c devolver todos los estudiantes
+    //Punto 2.c devolver todos los estudiantes ordenados por un criterio
     public List<EstudianteDTO> devolverEstudiantes() {
-        List<EstudianteDTO> estudiantes = new ArrayList<EstudianteDTO>();
+        List<EstudianteDTO> estudiantes = new ArrayList<>();
 
         try {
-            Query query = em.createQuery("SELECT e FROM Estudiante e ORDER BY e.edad DESC");
+            Query query = em.createQuery(/*"SELECT e FROM Estudiante e ORDER BY e.edad DESC"*/"SELECT new TP2.DTO.EstudianteDTO(e.nombres, e.apellido, e.edad, e.genero, e.ciudad_residencia, e.nro_libreta_universitaria) " +
+                    "FROM Estudiante e ORDER BY e.edad DESC");
             estudiantes = query.getResultList();
         } catch (PersistenceException e) {
             System.out.println("No se pudo obtener la lista de estudiantes: " + e.getMessage());
@@ -72,7 +73,11 @@ public class EstudianteRepositoryImplementacion implements EstudianteRepository 
         List<EstudianteDTO> estudiantes = new ArrayList<EstudianteDTO>();
 
         try {
-            Query query = em.createQuery("SELECT e FROM Estudiante e  WHERE e.genero=:genero ORDER BY e.edad DESC")
+            Query query = em.createQuery(
+                    "SELECT new TP2.DTO.EstudianteDTO(e.nombres, e.apellido, e.edad, e.genero, e.ciudad_residencia, e.nro_libreta_universitaria) " +
+                            "FROM Estudiante e " +
+                            "WHERE e.genero = :genero " +
+                            "ORDER BY e.edad DESC")
                     .setParameter("genero", genero);
             estudiantes = query.getResultList();
         } catch (PersistenceException e) {
@@ -82,10 +87,8 @@ public class EstudianteRepositoryImplementacion implements EstudianteRepository 
         return estudiantes;
     }
 
-    @Override
     public EstudianteDTO obtenerEstudianteLibreta(String lu) {
         try {
-            System.out.println("num"+ lu);
             Query query = em.createQuery("SELECT e FROM Estudiante e WHERE e.nro_libreta_universitaria = :lu")
                     .setParameter("lu", lu);
             Estudiante e = (Estudiante) query.getSingleResult();

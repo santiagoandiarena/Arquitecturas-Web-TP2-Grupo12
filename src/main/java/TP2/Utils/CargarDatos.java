@@ -104,15 +104,15 @@ public class CargarDatos {
 
                 if (estudiante != null && carrera != null){
                     // Convertir año (Integer) a LocalDate (1 de enero de ese año)
-                    LocalDate inscripcion = LocalDate.of(Integer.parseInt(linea[3]), 1, 1);
+  /*                  LocalDate inscripcion = LocalDate.of(Integer.parseInt(linea[3]), 1, 1);
                     LocalDate graduacion = "0".equals(linea[4]) ? null : LocalDate.of(Integer.parseInt(linea[4]), 1, 1);
-
+*/
                     EstudianteCarrera matricula = new EstudianteCarrera();
                     matricula.setId(Long.parseLong(linea[0]));
                     matricula.setEstudiante(estudiante);
                     matricula.setCarrera(carrera);
-                    matricula.setInscripcion(inscripcion);
-                    matricula.setGraduacion(graduacion);
+                    matricula.setInscripcion(Integer.parseInt(linea[3]));
+                    matricula.setGraduacion(Integer.parseInt(linea[4]));
                     matricula.setAntiguedad(Integer.parseInt(linea[5]));
 
                     em.merge(matricula);

@@ -3,8 +3,6 @@ package TP2.Modelo;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 
 @Getter
 @Setter

@@ -6,11 +6,6 @@ import TP2.Modelo.EstudianteCarrera;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
-import jakarta.persistence.Query;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EstudianteCarreraRepositoryImplementacion implements EstudianteCarreraRepository{
     private EntityManager em;
@@ -51,8 +46,4 @@ public class EstudianteCarreraRepositoryImplementacion implements EstudianteCarr
             throw e;
         }
     }
-
-    public void guardarMatricula(EstudianteCarrera matricula) {
-    }
-
 }

@@ -20,61 +20,60 @@ public class Ejecutable {
         CargarDatos cargarDatos = new CargarDatos();
 
         /*2-A. Dar de alta un estudiante */
-        /*System.out.println("\n====== Dando de alta un estudiante ====== " );
-        Estudiante estudiante = new Estudiante();
-        estudiante.setNro_documento(71779555L);
-        estudiante.setNombres("Juan");
-        estudiante.setApellido("Perez");
-        estudiante.setEdad(25);
-        estudiante.setGenero("Masculino");
-        estudiante.setCiudad_residencia("Buenos Aires");
-        estudiante.setNro_libreta_universitaria("12345678");
+            /*System.out.println("\n====== Dando de alta un estudiante ====== " );
+            Estudiante estudiante = new Estudiante();
+            estudiante.setNro_documento(71779555L);
+            estudiante.setNombres("Juan");
+            estudiante.setApellido("Perez");
+            estudiante.setEdad(25);
+            estudiante.setGenero("Masculino");
+            estudiante.setCiudad_residencia("Buenos Aires");
+            estudiante.setNro_libreta_universitaria("12345678");
 
-        repoEstudiante.addEstudiante(estudiante);*/
+            repoEstudiante.addEstudiante(estudiante);*/
 
         /*2-B. Matricular un estudiante en una carrera */
-        /*System.out.println("\n====== Matriculando un estudiante ====== " );
-        repoMatriculas.matricularEstudiante(1L, estudiante, repoCarreras.devolverCarreraPorId(5L), 2022, 2026, 0);*/
+            /*System.out.println("\n====== Matriculando un estudiante ====== " );
+            repoMatriculas.matricularEstudiante(1L, estudiante, repoCarreras.devolverCarreraPorId(5L), 2022, 2026, 0);*/
 
         /*2-C. Recuperar todos los estudiantes y especificar algún criterio de ordenamiento simple */
-        /*System.out.println("\n====== Ordenando estudiantes por edad ====== " );
-        repoEstudiante.devolverEstudiantes().forEach(System.out::println);*/
+            /*System.out.println("\n====== Ordenando estudiantes por edad ====== " );
+            repoEstudiante.devolverEstudiantes().forEach(System.out::println);*/
 
         /*2-D. Recuperar un estudiante en base a su número de libreta universitaria */
-        /*System.out.println("\n====== Buscando estudiante por Libreta Universitaria ====== " );
-        String lu = "34978";
-        System.out.println("\n" + repoEstudiante.obtenerEstudianteLibreta(lu) + ". Libreta Universitaria: " + lu);*/
+            /*System.out.println("\n====== Buscando estudiante por Libreta Universitaria ====== " );
+            String lu = "34978";
+            System.out.println("\n" + repoEstudiante.obtenerEstudianteLibreta(lu) + ". Libreta Universitaria: " + lu);*/
 
         /*2-E. Recuperar todos los estudiantes en base a su género */
-        /*System.out.println("\n====== Buscando estudiantes por género ====== " );
-        String genero = "Male";
-        repoEstudiante.devolverEstudiantesPorGenero(genero).forEach(e -> {
-            System.out.println("Género: " + genero + ". " + e);
-        });*/
+            /*System.out.println("\n====== Buscando estudiantes por género ====== " );
+            String genero = "Male";
+            repoEstudiante.devolverEstudiantesPorGenero(genero).forEach(e -> {
+                System.out.println("Género: " + genero + ". " + e);
+            });*/
 
         /*2-F. Recuperar las carreras con estudiantes inscriptos y ordenar por cantidad de inscriptos *//*
-       System.out.println("\n====== Buscando carreras con sus inscriptos ====== " );
-        System.out.println("\nCarreras con estudiantes inscriptos:");
-        for (Object[] resultado : repoCarreras.carrerasConEstudiantes()) {
-            Carreras carrera = (Carreras) resultado[0];
-            Long cantidad = (Long) resultado[1];
-            System.out.println("Carrera: " + carrera.getCarrera() + " - Cantidad de inscriptos: " + cantidad);
-        }*/
+           System.out.println("\n====== Buscando carreras con sus inscriptos ====== " );
+            System.out.println("\nCarreras con estudiantes inscriptos:");
+            for (Object[] resultado : repoCarreras.carrerasConEstudiantes()) {
+                Carreras carrera = (Carreras) resultado[0];
+                Long cantidad = (Long) resultado[1];
+                System.out.println("Carrera: " + carrera.getCarrera() + " - Cantidad de inscriptos: " + cantidad);
+            }*/
 
-        /*2-G. Recuperar los estudiantes de una determinada carrera filtrado por ciudad de residencia *//*
-        System.out.println("\n====== Buscando estudiantes por carrera y ciudad ====== " );
-        System.out.println("\nEstudiantes de una determinada carrera y ciudad:" + repoEstudiante.devolverEstudiantesDeXCarreraPorCiudad(1, "Paquera"));*/
+        /*2-G. Recuperar los estudiantes de una determinada carrera filtrado por ciudad de residencia */
+            /*System.out.println("\n====== Buscando estudiantes por carrera y ciudad ====== " );
+            System.out.println("\nEstudiantes de una determinada carrera y ciudad:" + repoEstudiante.devolverEstudiantesDeXCarreraPorCiudad(1, "Paquera"));*/
 
         /*3. Generar un reporte de las carreras, que para cada carrera incluya información de los inscriptos y egresados por año. Se deben ordenar las carreras alfabéticamente, y presentar los años de manera cronológica*/
-        /*
-        System.out.println("\n====== Generando reporte ====== " );
-        repoCarreras.generarReporte();*/
+            /*System.out.println("\n====== Generando reporte ====== " );
+            repoCarreras.generarReporte();*/
 
 
         // Cerrar los EntityManager
-        repoCarreras.close();
-        repoEstudiante.close();
-        repoMatriculas.close();
+            repoCarreras.close();
+            repoEstudiante.close();
+            repoMatriculas.close();
     }
 
 }

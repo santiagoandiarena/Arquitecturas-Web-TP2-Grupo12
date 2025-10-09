@@ -1,13 +1,7 @@
 package TP2.DTO;
 
-import TP2.Modelo.Carreras;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.*;
 
-import java.util.List;
 
 @Data
 @NoArgsConstructor
